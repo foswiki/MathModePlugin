@@ -28,7 +28,7 @@ use vars qw(
   $web $topic $VERSION $RELEASE $core %TWikiCompatibility
   $NO_PREFS_IN_TOPIC $SHORTDESCRIPTION
 );
-$VERSION = '$Rev: 15934 $';
+$VERSION = '$Rev$';
 $RELEASE = '2.96';
 $NO_PREFS_IN_TOPIC = 1;
 $SHORTDESCRIPTION = 'Include <nop>LaTeX formatted math in your TWiki pages';
