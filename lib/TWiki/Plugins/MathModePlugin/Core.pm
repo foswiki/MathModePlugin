@@ -1,12 +1,7 @@
-# MathModePlugin/Core.pm
+# Plugin for Foswiki - The Free and Open Source Wiki, http://foswiki.org/
 #
-# Copyright (C) 2006 MichaelDaum@WikiRing.com
+# Copyright (C) 2006-2009 Michael Daum http://michaeldaumconsulting.com
 # Copyright (C) 2002 Graeme Lufkin, gwl@u.washington.edu
-#
-# TWiki WikiClone ($wikiversion has version info)
-#
-# Copyright (C) 2000-2001 Andrea Sterbini, a.sterbini@flashnet.it
-# Copyright (C) 2001 Peter Thoeny, Peter@Thoeny.com
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -28,7 +23,7 @@ use Digest::MD5 qw( md5_hex );
 use File::Copy qw( move );
 use File::Temp;
 
-sub DEBUG { 0; } # toggle me
+use constant DEBUG => 0; # toggle me
 
 ###############################################################################
 # static
@@ -144,14 +139,8 @@ sub init {
   $this->{doRefresh} = ($refresh =~ /^(on|yes|1)$/)?1:0;
 
   # create a sandbox
-  unless (defined &TWiki::Sandbox::new) {
-    eval "use TWiki::Contrib::DakarContrib;";
-    $this->{sandbox} = new TWiki::Sandbox();
-  } else {
-    $this->{sandbox} = 
-      $TWiki::sharedSandbox ||
-      $TWiki::sandbox; # TWiki-4.2
-  }
+  require TWiki::Sandbox;
+  $this->{sandbox} = new TWiki::Sandbox();
 
   # create the topic pubdir if it does not exist already
   my $pubDir = &TWiki::Func::getPubDir();
@@ -178,37 +167,49 @@ sub init {
 sub handleMath {
   my ($this, $web, $topic, $text, $inlineFlag, $args) = @_;
   
-  $args ||= '';
-
   # store the string in a hash table, indexed by the MD5 hash
   $text =~ s/^\s+//go;
   $text =~ s/\s+$//go;
+
   # extract latex options
-  $this->{fgColors}{$text} = TWiki::Func::extractNameValuePair($args, 'color') 
-    || $this->{latexFGColor};
+  $args ||= '';
+  require TWiki::Attrs;
+  my $params = new TWiki::Attrs($args);
+  $this->{fgColors}{$text} = $params->{color} || $this->{latexFGColor};
+  $this->{bgColor} = $params->{bgcolor} || $this->{latexBGColor};
 
-  $this->{bgColor} = TWiki::Func::extractNameValuePair($args, 'bgcolor') 
-    || $this->{latexBGColor};
-
-  my $size = TWiki::Func::extractNameValuePair($args, 'size') || '';
+  my $size = $params->{size} || '';
   $this->{sizes}{$text} = $size if $size;
 
   # TODO: add global settings to hash
   my $hashCode = md5_hex($text.$this->{fgColors}{$text}.$this->{bgColor}.$size);
   $this->{hashedMathStrings}{$hashCode} = $text;
-  #writeDebug("hasing '$text' as $hashCode");
+  #writeDebug("hashing '$text' as $hashCode");
 
   # construct url path to image
-  my $url = &TWiki::Func::getPubUrlPath().'/'.$web.'/'.$topic.
+  my $url = TWiki::Func::getPubUrlPath().'/'.$web.'/'.$topic.
     '/'.$this->{imagePrefix}.$hashCode.'.'.$this->{imageType};
 
   # return a link to an attached image, which we will create later
   my $container = $inlineFlag?'span':'div';
-  my $result = '<img class="mmpImage" src="'.$url.'" '.$args.' />';
+  my $alt = entityEncode($text);
+  my $result = '<img alt="'.$alt.'" class="mmpImage" src="'.$url.'" '.$args.' />';
   $result = "<$container class='mmpContainer' align='center'>".$result."<\/$container>"
     unless $inlineFlag == 2;
 
   return $result;
+}
+
+###############################################################################
+# from TWiki.pm
+sub entityEncode {
+  my ($text, $extra) = @_;
+  $extra ||= '';
+
+  $text =~
+    s/([[\x01-\x09\x0b\x0c\x0e-\x1f"%&'*<=>@[_\|$extra])/'&#'.ord($1).';'/ge;
+
+  return $text;
 }
 
 ###############################################################################
@@ -224,10 +225,10 @@ sub postRenderingHandler {
   return unless $this->checkImages();
 
   # do it
-  my $msg = $this->renderImages();
+  my $msg = $this->renderImages() || '';
 
   # append to text
-  $_[3] .= $msg if $msg;
+  $_[3] .= $msg;
 }
 	
 ###############################################################################

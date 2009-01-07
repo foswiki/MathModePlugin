@@ -1,12 +1,7 @@
-# MathModePlugin.pm
+# Plugin for Foswiki - The Free and Open Source Wiki, http://foswiki.org/
 #
-# Copyright (C) 2006-2007 Michael Daum http://wikiring.de
+# Copyright (C) 2006-2009 Michael Daum http://michaeldaumconsulting.com
 # Copyright (C) 2002 Graeme Lufkin, gwl@u.washington.edu
-#
-# TWiki WikiClone ($wikiversion has version info)
-#
-# Copyright (C) 2000-2001 Andrea Sterbini, a.sterbini@flashnet.it
-# Copyright (C) 2001 Peter Thoeny, Peter@Thoeny.com
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -29,7 +24,7 @@ use vars qw(
   $NO_PREFS_IN_TOPIC $SHORTDESCRIPTION
 );
 $VERSION = '$Rev$';
-$RELEASE = '2.96';
+$RELEASE = '3.00';
 $NO_PREFS_IN_TOPIC = 1;
 $SHORTDESCRIPTION = 'Include <nop>LaTeX formatted math in your TWiki pages';
 $TWikiCompatibility{endRenderingHandler} = 1.1;
@@ -55,22 +50,15 @@ sub commonTagsHandler {
 sub getCore {
   return $core if $core;
   
-  eval 'use TWiki::Plugins::MathModePlugin::Core;';
-  die $@ if $@;
-
+  require TWiki::Plugins::MathModePlugin::Core;
   $core = new TWiki::Plugins::MathModePlugin::Core;
+
   return $core;
 }
 
 ###############################################################################
 sub handleMath { 
   return getCore()->handleMath($web, $topic, @_); 
-}
-
-###############################################################################
-sub endRenderingHandler { 
-  return unless $core; # no math
-  $core->postRenderingHandler($web, $topic, @_)
 }
 
 ###############################################################################

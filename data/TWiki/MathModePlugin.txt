@@ -1,4 +1,4 @@
-%META:TOPICINFO{author="ProjectContributor" date="1197052703" format="1.1" version="$Rev$"}%
+%META:TOPICINFO{author="ProjectContributor" date="1231348349" format="1.1" reprev="1.2" version="1.2"}%
 <!--
 
    PLEASE DO NOT EDIT THIS TOPIC
@@ -15,13 +15,13 @@
 <table style="float:right">
 <tr>
   <td><img src="%ATTACHURLPATH%/wikiringlogo40x40.png"></td>
-  <td><a href="http://wikiring.de" title="Make your Wiki ring!" style="text-decoration:none">
+  <td><a href="http://wikiring.com" title="Make your Wiki ring!" style="text-decoration:none">
       Powered by <br /> <nop>WikiRing Consultants </a>
   </td>
 </tr>
 </table>
 ---++ Description
-This plugin allows you to include mathematics in a TWiki page, with a format
+This plugin allows you to include mathematics in a topic, with a format
 very similar to <nop>LaTeX.  The external program =latex2html= is used to
 generate =gif= (or =png=) images from the math markup, and the image is then included in
 the page.  The first time a particular expression is rendered, you will notice
@@ -140,13 +140,13 @@ This is <latex color="red" size="large">\cal A</latex> new inline test.
    * Make sure they are installed and check the paths to the programs =latex=, =dvipng= and
      =convert= in the latex2img shiped with this plugin 
    * Edit the file =&lt;path-to-twiki>/pub/%SYSTEMWEB%/%TOPIC%/latex2img= accordingly
-   * Visit =configure= in your TWiki installation, and enable the plugin in the {Plugins} section.
+   * Visit =configure= in your installation, and enable the plugin in the {Plugins} section.
 
 ---++ Configuration
 There are a set of configuration variables that an be set in different places.
 All of the below variables can be set in your =LocalSite.cfg= file like this:
 <verbatim>
-$TWiki::cfg{MathModePlugin}{<Name>} = <value>;
+$Foswiki::cfg{MathModePlugin}{<Name>} = <value>;
 </verbatim>
 Some of the below variables can _only_ be set this way, some of the may be
 overridden by defining the respective prefrence variable.
@@ -178,13 +178,14 @@ overridden by defining the respective prefrence variable.
 
 ---++ Plugin Info
 <!-- provided for compatibility only
-   * Set SHORTDESCRIPTION = Include <nop>LaTeX formatted math in your TWiki pages
+   * Set SHORTDESCRIPTION = Include <nop>LaTeX formatted math in a topic
 -->
-|  Plugin Author: | TWiki:Main.GraemeLufkin, TWiki:Main.MichaelDaum |
-|  Copyright &copy;: | 2002 Graeme Lufkin, gwl@u.washington.edu, 2006-2007, Michael Daum http://wikiring.de |
+|  Plugin Author: | Graeme Lufkin, Michael Daum |
+|  Copyright &copy;: | 2002 Graeme Lufkin, gwl@u.washington.edu, 2006-2009, Michael Daum http://michaeldaumconsulting.com |
 |  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
-|  Plugin Version: | 2.96 |
+|  Plugin Version: | 3.00 |
 |  Change History: | &nbsp; |
+|  07 Jan 2009: | certified for foswiki/compat; removed deprecated endRenderingHandler |
 |  07 Dec 2007: | replaced =templfile= with =mktemp= in the latex2img helper script |
 |  13 Nov 2007: | fixed plugin on 4.2 |
 |  18 Dec 2006: | only use one bgcolor |
@@ -217,10 +218,5 @@ overridden by defining the respective prefrence variable.
 |  Foswiki:Extensions/Benchmark: | %SYSTEMWEB%.GoodStyle nn%, %SYSTEMWEB%.FormattedSearch nn%, %TOPIC% nn% |
 |  Plugin Home: | Foswiki:Extensions/%TOPIC% |
 |  Feedback: | Foswiki:Extensions/%TOPIC%Dev |
-|  Appraisal: | Foswiki:Extensions/%TOPIC%Appraisal |
-
--- TWiki:Main.GraemeLufkin - 05 Jun 2002 %BR%
--- TWiki:Main.MichaelDaum - 07 Dec 2007
 
 %META:FILEATTACHMENT{name="wikiringlogo40x40.png" attr="h" autoattached="1" comment="" date="1194980363" path="wikiringlogo40x40.png" size="2571" user="ProjectContributor" version="1"}%
-%META:FILEATTACHMENT{name="latex2img" attr="" autoattached="1" comment="" date="1197052551" path="latex2img" size="1178" version=""}%
