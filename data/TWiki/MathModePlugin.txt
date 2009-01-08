@@ -127,20 +127,7 @@ This is <latex color="red" size="large">\cal A</latex> new inline test.
 | =\eta= | <latex>\eta</latex> | =\xi= | <latex>\xi</latex> |
 
 ---++ Plugin Installation Instructions
-
-   * [[http://twiki.org/p/pub/Plugins/%TOPIC%/%TOPIC%.zip][Download]] the ZIP file
-   * Unzip ==%TOPIC%.zip== in your twiki installation directory. Content:
-   | *File:* | *Description:* |
-%$MANIFEST%
-   * This plugin makes use of three additional tools that are used to convert latex formulas
-     to images. These are 
-      * a working <nop>LaTeX implementation 
-      * [[http://sourceforge.net/projects/dvipng/][dvipng]] and
-      * [[http://www.imagemagick.org/][ImageMagick]]
-   * Make sure they are installed and check the paths to the programs =latex=, =dvipng= and
-     =convert= in the latex2img shiped with this plugin 
-   * Edit the file =&lt;path-to-twiki>/pub/%SYSTEMWEB%/%TOPIC%/latex2img= accordingly
-   * Visit =configure= in your installation, and enable the plugin in the {Plugins} section.
+%$INSTALL_INSTRUCTIONS%
 
 ---++ Configuration
 There are a set of configuration variables that an be set in different places.
@@ -183,7 +170,7 @@ overridden by defining the respective prefrence variable.
 |  Plugin Author: | Graeme Lufkin, Michael Daum |
 |  Copyright &copy;: | 2002 Graeme Lufkin, gwl@u.washington.edu, 2006-2009, Michael Daum http://michaeldaumconsulting.com |
 |  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
-|  Plugin Version: | 3.00 |
+|  Plugin Version: | 3.01 |
 |  Change History: | &nbsp; |
 |  07 Jan 2009: | certified for foswiki/compat; removed deprecated endRenderingHandler |
 |  07 Dec 2007: | replaced =templfile= with =mktemp= in the latex2img helper script |
@@ -200,7 +187,7 @@ overridden by defining the respective prefrence variable.
 		  added a latex2img shell script; \
 		  returning full latex error report |
 |  04 Aug 2006: | major rewrite; \
-        fixed security issues by using TWiki's sandbox feature \
+        fixed security issues by using the sandbox feature \
         and creating tempfiles properly; \
                   added new &lt;latex>...&lt;/latex> tag to support multiline formulas;\
                   better configurability; \
@@ -215,7 +202,6 @@ overridden by defining the respective prefrence variable.
 |  CPAN Dependencies: | none |
 |  Other Dependencies: | <nop>LaTeX, dvipng, <nop>ImageMagick |
 |  Perl Version: | 5.8 |
-|  Foswiki:Extensions/Benchmark: | %SYSTEMWEB%.GoodStyle nn%, %SYSTEMWEB%.FormattedSearch nn%, %TOPIC% nn% |
 |  Plugin Home: | Foswiki:Extensions/%TOPIC% |
 |  Feedback: | Foswiki:Extensions/%TOPIC%Dev |
 
