@@ -22,6 +22,7 @@ use strict;
 use Digest::MD5 qw( md5_hex );
 use File::Copy qw( move );
 use File::Temp;
+use FindBin;
 
 use constant DEBUG => 0; # toggle me
 
@@ -156,7 +157,30 @@ sub init {
 
   # default to supplied tools
   unless ($this->{latex2Img}) {
-    $this->{latex2Img} = $pubDir.'/TWiki/MathModePlugin/latex2img';
+    # Build a list of paths that might be the tools directory
+    # SMELL: There should be an API to provide the path to /tools
+    my @possibleToolsDirs = ();
+    if (exists $TWiki::cfg{LocalesDir}) {
+      # Assumes that /tools and /locale are in the same directory
+      push @possibleToolsDirs, "$TWiki::cfg{LocalesDir}/../tools";
+    }
+    if (defined $FindBin::Bin) {
+      # Assumes that /tools and /bin are in the same directory
+      # Assumes that $FindBin::Bin gives /bin
+      #  - which might be wrong under mod_perl
+      $FindBin::Bin =~ /(.*)/; #untaint
+      push @possibleToolsDirs, "$1/../tools";
+    }
+    # Look in these directories to see if the default supplied tool is there
+    my $defaultScriptName = 'MathModePlugin_latex2img';
+    POSSIBLE_DIR: for my $possibleToolsDir (@possibleToolsDirs) {
+      if (-e "$possibleToolsDir/$defaultScriptName" and
+          -x "$possibleToolsDir/$defaultScriptName")
+      {
+        $this->{latex2Img} = "$possibleToolsDir/$defaultScriptName";
+        last POSSIBLE_DIR;
+      }
+    }
   }
 
 }
@@ -220,7 +244,7 @@ sub postRenderingHandler {
 
   # initialize this call
   $this->init($web, $topic);
-	
+
   # check if there are any new images to render
   return unless $this->checkImages();
 
@@ -230,7 +254,7 @@ sub postRenderingHandler {
   # append to text
   $_[3] .= $msg;
 }
-	
+
 ###############################################################################
 # if this is a save script, then we will try to delete old files;
 # existing files are checkd if they are still in use;
@@ -264,9 +288,9 @@ sub checkImages {
       # the image is already there, we don't need to re-render;
       # refresh the cache only if we asked for it
       unless ($this->{doRefresh}) {
-	#writeDebug("skipping $this->{hashedMathStrings}{$hashCode}");
-	delete $this->{hashedMathStrings}{$hashCode};
-	next;
+        #writeDebug("skipping $this->{hashedMathStrings}{$hashCode}");
+        delete $this->{hashedMathStrings}{$hashCode};
+        next;
       }
     }
     
@@ -325,7 +349,7 @@ PREAMBLE
       print $tempFile "\\$this->{sizes}{$value}\n";
     } else {
       print $tempFile "\\$this->{latexFontSize}\n"
-	if $this->{latexFontSize} ne "normalsize";
+        if $this->{latexFontSize} ne "normalsize";
     }
 
     # analyze which environment to use
@@ -343,14 +367,21 @@ PREAMBLE
   }
   print $tempFile "\\end{document}\n";
 
-  # run latex2html on the latex file we generated
-  my $latex2ImgCmd = $this->{latex2Img} . ' %FILENAME|F%';
-  $latex2ImgCmd .= " $this->{bgColor}";
-  $latex2ImgCmd .= ' -D '.int(100)*$this->{scaleFactor};
-  $latex2ImgCmd .= ' --'.$this->{imageType};
+  my ($data, $exit);
+  if ($this->{latex2Img})  {
+    # run latex2html on the latex file we generated
+    my $latex2ImgCmd = $this->{latex2Img} . ' %FILENAME|F%';
+    $latex2ImgCmd .= " $this->{bgColor}";
+    $latex2ImgCmd .= ' -D '.int(100)*$this->{scaleFactor};
+    $latex2ImgCmd .= ' --'.$this->{imageType};
 
-  #writeDebug("executing $latex2ImgCmd");
-  my ($data, $exit) = $this->{sandbox}->sysCommand($latex2ImgCmd, FILENAME=>"$tempFile");
+    #writeDebug("executing $latex2ImgCmd");
+    ($data, $exit) = $this->{sandbox}->sysCommand($latex2ImgCmd, FILENAME=>"$tempFile");
+  }
+  else {
+    $exit = 1;
+    $data = "MathModePlugin cannot find the latex2img script. Please check the settings in configure";
+  }
   #writeDebug("exit=$exit");
   #writeDebug("data=$data");
   if ($exit) {
