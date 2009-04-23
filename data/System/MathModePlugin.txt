@@ -1,4 +1,4 @@
-%META:TOPICINFO{author="ProjectContributor" date="1231348349" format="1.1" reprev="1.2" version="1.2"}%
+%META:TOPICINFO{author="ProjectContributor" date="1231348349" format="1.1"  version="1.2"}%
 <!--
 
    PLEASE DO NOT EDIT THIS TOPIC
@@ -170,8 +170,9 @@ overridden by defining the respective prefrence variable.
 |  Plugin Author: | Graeme Lufkin, Michael Daum |
 |  Copyright &copy;: | 2002 Graeme Lufkin, gwl@u.washington.edu, 2006-2009, Michael Daum http://michaeldaumconsulting.com |
 |  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
-|  Plugin Version: | 3.01 |
+|  Plugin Version: | 4.00 |
 |  Change History: | &nbsp; |
+|  23 Apr 2009: | converted to foswiki plugin |
 |  07 Jan 2009: | certified for foswiki/compat; removed deprecated endRenderingHandler |
 |  07 Dec 2007: | replaced =templfile= with =mktemp= in the latex2img helper script |
 |  13 Nov 2007: | fixed plugin on 4.2 |
@@ -195,14 +196,14 @@ overridden by defining the respective prefrence variable.
         fixed issues where images have not been cleaned up regularly; \
         speedup don't clean orphaned images during =view= but during =save=; \
                   speedup by adding lazy compilation and initialization; \
-                  implemented a =postRenderingHandler= for TWiki V4; \
+                  implemented a =postRenderingHandler= for T* V4; \
                   prevent auto-generated images stored in pub from \
-        being auto-attached using TWiki V4 |
+        being auto-attached using T* V4 |
 |  03 Apr 2002: | Initial version |
 |  CPAN Dependencies: | none |
 |  Other Dependencies: | <nop>LaTeX, dvipng, <nop>ImageMagick |
 |  Perl Version: | 5.8 |
 |  Plugin Home: | Foswiki:Extensions/%TOPIC% |
-|  Feedback: | Foswiki:Extensions/%TOPIC%Dev |
+|  Support: | Foswiki:Support/%TOPIC% |
 
 %META:FILEATTACHMENT{name="wikiringlogo40x40.png" attr="h" autoattached="1" comment="" date="1194980363" path="wikiringlogo40x40.png" size="2571" user="ProjectContributor" version="1"}%

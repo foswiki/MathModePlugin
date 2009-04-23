@@ -16,7 +16,7 @@
 #
 ###############################################################################
 
-package TWiki::Plugins::MathModePlugin::Core;
+package Foswiki::Plugins::MathModePlugin::Core;
 
 use strict;
 use Digest::MD5 qw( md5_hex );
@@ -29,7 +29,7 @@ use constant DEBUG => 0; # toggle me
 ###############################################################################
 # static
 sub writeDebug {
-  #&TWiki::Func::writeDebug('- MathModePlugin - '.$_[0]) if DEBUG;
+  #&Foswiki::Func::writeDebug('- MathModePlugin - '.$_[0]) if DEBUG;
   print STDERR '- MathModePlugin - '.$_[0]."\n" if DEBUG;
 }
 
@@ -52,36 +52,36 @@ sub new {
       # tiny, scriptsize, footnotesize, small, normalsize, large, Large, LARGE,
       # huge or Huge
 
-    hashCodeLength => $TWiki::cfg{MathModePlugin}{HashCodeLength} || 32,
+    hashCodeLength => $Foswiki::cfg{MathModePlugin}{HashCodeLength} || 32,
       # length of the hash code. If you switch to a different
       # hash function, you will likely have to change this
 
-    imagePrefix => $TWiki::cfg{MathModePlugin}{ImagePrefix} || '_MathModePlugin_',
+    imagePrefix => $Foswiki::cfg{MathModePlugin}{ImagePrefix} || '_MathModePlugin_',
       # string to be prepended to any auto-generated image
 
-    latex2Img => $TWiki::cfg{MathModePlugin}{Latex2Img},
+    latex2Img => $Foswiki::cfg{MathModePlugin}{Latex2Img},
       # the command to convert latex to a png or gif
 
-    scaleFactor => $TWiki::cfg{MathModePlugin}{ScaleFactor} || 1.2,
+    scaleFactor => $Foswiki::cfg{MathModePlugin}{ScaleFactor} || 1.2,
       # factor to scale images;
-      # may be overridden by a LATEXSCALEFACTOR  TWiki preference variable
+      # may be overridden by a LATEXSCALEFACTOR preference variable
 
-    latexFGColor => $TWiki::cfg{MathModePlugin}{LatexFGColor} || 'black',
+    latexFGColor => $Foswiki::cfg{MathModePlugin}{LatexFGColor} || 'black',
       # default text color
 
-    latexBGColor => $TWiki::cfg{MathModePlugin}{LatexBGColor} || 'white',
+    latexBGColor => $Foswiki::cfg{MathModePlugin}{LatexBGColor} || 'white',
       # default background color
 
-    latexFontSize => $TWiki::cfg{MathModePlugin}{LatexFontSize} || 'normalsize',
+    latexFontSize => $Foswiki::cfg{MathModePlugin}{LatexFontSize} || 'normalsize',
       # default text color
 
-    latexPreamble => $TWiki::cfg{MathModePlugin}{Preamble} || 
+    latexPreamble => $Foswiki::cfg{MathModePlugin}{Preamble} || 
       '\usepackage{latexsym}',
       # latex preamble, e.g. to include additional packages; may be 
       # overridden by a LATEXPREAMBLE preference variable;
       # Example: \usepackage{mathptmx} to change the math font
 
-    imageType => $TWiki::cfg{MathModePlugin}{ImageType} || 'png',
+    imageType => $Foswiki::cfg{MathModePlugin}{ImageType} || 'png',
       # extension of the image type;
       # may be overridden by a LATEXIMAGETYPE preference variable
 
@@ -101,23 +101,23 @@ sub init {
   $this->{isInitialized} = 1;
 
   # get preverences
-  my $value = TWiki::Func::getPreferencesValue('LATEXSCALEFACTOR');
+  my $value = Foswiki::Func::getPreferencesValue('LATEXSCALEFACTOR');
   $this->{scaleFactor} = $value if $value;
 
-  $value = TWiki::Func::getPreferencesValue('LATEXIMAGETYPE');
+  $value = Foswiki::Func::getPreferencesValue('LATEXIMAGETYPE');
   $this->{imageType} = $value if $value;
   $this->{imageType} = 'png' unless $this->{imageType} =~ /^(png|gif)$/i;
 
-  $value = TWiki::Func::getPreferencesValue('LATEXPREAMBLE');
+  $value = Foswiki::Func::getPreferencesValue('LATEXPREAMBLE');
   $this->{latexPreamble} = $value if $value;
 
-  $value = TWiki::Func::getPreferencesValue('LATEXBGCOLOR');
+  $value = Foswiki::Func::getPreferencesValue('LATEXBGCOLOR');
   $this->{latexBGColor} = $value if $value;
 
-  $value = TWiki::Func::getPreferencesValue('LATEXFGCOLOR');
+  $value = Foswiki::Func::getPreferencesValue('LATEXFGCOLOR');
   $this->{latexFGColor} = $value if $value;
 
-  $value = TWiki::Func::getPreferencesValue('LATEXFONTSIZE');
+  $value = Foswiki::Func::getPreferencesValue('LATEXFONTSIZE');
   $this->{latexFontSize} = $value if $value;
 
   # get the current cgi
@@ -135,20 +135,20 @@ sub init {
     $this->{hashCodeLength}+length($this->{imageType})+length($this->{imagePrefix})+1;
 
   # get refresh request
-  my $query = TWiki::Func::getCgiQuery();
+  my $query = Foswiki::Func::getCgiQuery();
   my $refresh = $query->param('refresh') || '';
   $this->{doRefresh} = ($refresh =~ /^(on|yes|1)$/)?1:0;
 
   # create a sandbox
-  require TWiki::Sandbox;
-  $this->{sandbox} = new TWiki::Sandbox();
+  require Foswiki::Sandbox;
+  $this->{sandbox} = new Foswiki::Sandbox();
 
   # create the topic pubdir if it does not exist already
-  my $pubDir = &TWiki::Func::getPubDir();
+  my $pubDir = &$Foswiki::cfg{PubDir};
   my $topicPubDir = $pubDir;
   foreach my $dir (split(/\//, "$web/$topic")) {
     $topicPubDir .= '/'.$dir;
-    $topicPubDir = TWiki::Sandbox::normalizeFileName($topicPubDir);
+    $topicPubDir = Foswiki::Sandbox::normalizeFileName($topicPubDir);
     unless (-d $topicPubDir) {
       mkdir $topicPubDir or die "can't create directory $topicPubDir";
     }
@@ -160,9 +160,9 @@ sub init {
     # Build a list of paths that might be the tools directory
     # SMELL: There should be an API to provide the path to /tools
     my @possibleToolsDirs = ();
-    if (exists $TWiki::cfg{LocalesDir}) {
+    if (exists $Foswiki::cfg{LocalesDir}) {
       # Assumes that /tools and /locale are in the same directory
-      push @possibleToolsDirs, "$TWiki::cfg{LocalesDir}/../tools";
+      push @possibleToolsDirs, "$Foswiki::cfg{LocalesDir}/../tools";
     }
     if (defined $FindBin::Bin) {
       # Assumes that /tools and /bin are in the same directory
@@ -197,8 +197,8 @@ sub handleMath {
 
   # extract latex options
   $args ||= '';
-  require TWiki::Attrs;
-  my $params = new TWiki::Attrs($args);
+  require Foswiki::Attrs;
+  my $params = new Foswiki::Attrs($args);
   $this->{fgColors}{$text} = $params->{color} || $this->{latexFGColor};
   $this->{bgColor} = $params->{bgcolor} || $this->{latexBGColor};
 
@@ -211,7 +211,7 @@ sub handleMath {
   #writeDebug("hashing '$text' as $hashCode");
 
   # construct url path to image
-  my $url = TWiki::Func::getPubUrlPath().'/'.$web.'/'.$topic.
+  my $url = Foswiki::Func::getPubUrlPath().'/'.$web.'/'.$topic.
     '/'.$this->{imagePrefix}.$hashCode.'.'.$this->{imageType};
 
   # return a link to an attached image, which we will create later
@@ -225,7 +225,7 @@ sub handleMath {
 }
 
 ###############################################################################
-# from TWiki.pm
+# from Foswiki.pm
 sub entityEncode {
   my ($text, $extra) = @_;
   $extra ||= '';
@@ -271,7 +271,7 @@ sub checkImages {
   opendir(DIR,$this->{topicPubDir}) or die "can't open directory $this->{topicPubDir}";
   my @files = grep(/$this->{imagePrefix}.*\.$this->{imageType}$/,readdir(DIR));
   foreach my $fileName (@files) {
-    $fileName = TWiki::Sandbox::normalizeFileName($fileName);
+    $fileName = Foswiki::Sandbox::normalizeFileName($fileName);
     #writeDebug( "found image: $fileName");
 
     # is the filename the same length as one of our images?
@@ -385,7 +385,7 @@ PREAMBLE
   #writeDebug("exit=$exit");
   #writeDebug("data=$data");
   if ($exit) {
-    $msg = '<div class="twikiAlert">Error during latex2img:<pre>'.
+    $msg = '<div class="foswikiAlert">Error during latex2img:<pre>'.
       $data.'</pre></div>';
   } else {
     # rename the files to the hash code, so we can uniquely identify them

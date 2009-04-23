@@ -16,24 +16,24 @@
 #
 ###############################################################################
 
-package TWiki::Plugins::MathModePlugin;
+package Foswiki::Plugins::MathModePlugin;
 
 use strict;
 use vars qw(
-  $web $topic $VERSION $RELEASE $core %TWikiCompatibility
+  $web $topic $VERSION $RELEASE $core %FoswikiCompatibility
   $NO_PREFS_IN_TOPIC $SHORTDESCRIPTION
 );
 $VERSION = '$Rev$';
-$RELEASE = '3.01';
+$RELEASE = '4.00';
 $NO_PREFS_IN_TOPIC = 1;
-$SHORTDESCRIPTION = 'Include <nop>LaTeX formatted math in your TWiki pages';
-$TWikiCompatibility{endRenderingHandler} = 1.1;
+$SHORTDESCRIPTION = 'Include <nop>LaTeX formatted math in your Foswiki pages';
+$FoswikiCompatibility{endRenderingHandler} = 1.1;
 
 ###############################################################################
 sub initPlugin {
   ($topic, $web) = @_;
 	
-  $core = undef;
+  undef $core;
   return 1;
 }
 
@@ -50,8 +50,8 @@ sub commonTagsHandler {
 sub getCore {
   return $core if $core;
   
-  require TWiki::Plugins::MathModePlugin::Core;
-  $core = new TWiki::Plugins::MathModePlugin::Core;
+  require Foswiki::Plugins::MathModePlugin::Core;
+  $core = new Foswiki::Plugins::MathModePlugin::Core;
 
   return $core;
 }
