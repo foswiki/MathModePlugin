@@ -23,6 +23,7 @@ use Digest::MD5 qw( md5_hex );
 use File::Copy qw( move );
 use File::Temp;
 use FindBin;
+use Foswiki::Sandbox;
 
 use constant DEBUG => 0; # toggle me
 
@@ -139,12 +140,8 @@ sub init {
   my $refresh = $query->param('refresh') || '';
   $this->{doRefresh} = ($refresh =~ /^(on|yes|1)$/)?1:0;
 
-  # create a sandbox
-  require Foswiki::Sandbox;
-  $this->{sandbox} = new Foswiki::Sandbox();
-
   # create the topic pubdir if it does not exist already
-  my $pubDir = &$Foswiki::cfg{PubDir};
+  my $pubDir = $Foswiki::cfg{PubDir};
   my $topicPubDir = $pubDir;
   foreach my $dir (split(/\//, "$web/$topic")) {
     $topicPubDir .= '/'.$dir;
@@ -376,7 +373,7 @@ PREAMBLE
     $latex2ImgCmd .= ' --'.$this->{imageType};
 
     #writeDebug("executing $latex2ImgCmd");
-    ($data, $exit) = $this->{sandbox}->sysCommand($latex2ImgCmd, FILENAME=>"$tempFile");
+    ($data, $exit) = Foswiki::Sandbox->sysCommand($latex2ImgCmd, FILENAME=>"$tempFile");
   }
   else {
     $exit = 1;

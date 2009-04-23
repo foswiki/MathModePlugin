@@ -24,7 +24,7 @@ use vars qw(
   $NO_PREFS_IN_TOPIC $SHORTDESCRIPTION
 );
 $VERSION = '$Rev$';
-$RELEASE = '4.00';
+$RELEASE = '4.01';
 $NO_PREFS_IN_TOPIC = 1;
 $SHORTDESCRIPTION = 'Include <nop>LaTeX formatted math in your Foswiki pages';
 $FoswikiCompatibility{endRenderingHandler} = 1.1;

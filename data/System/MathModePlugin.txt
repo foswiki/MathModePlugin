@@ -170,7 +170,7 @@ overridden by defining the respective prefrence variable.
 |  Plugin Author: | Graeme Lufkin, Michael Daum |
 |  Copyright &copy;: | 2002 Graeme Lufkin, gwl@u.washington.edu, 2006-2009, Michael Daum http://michaeldaumconsulting.com |
 |  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
-|  Plugin Version: | 4.00 |
+|  Plugin Version: | 4.01 |
 |  Change History: | &nbsp; |
 |  23 Apr 2009: | converted to foswiki plugin |
 |  07 Jan 2009: | certified for foswiki/compat; removed deprecated endRenderingHandler |

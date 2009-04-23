@@ -1,5 +1,5 @@
 data/System/MathModePlugin.txt 0644
-tools/MathModePlugin_latex2img 0555
-pub/System/MathModePlugin/wikiringlogo40x40.png 0644
-lib/Foswiki/Plugins/MathModePlugin.pm 0644
 lib/Foswiki/Plugins/MathModePlugin/Core.pm 0644
+lib/Foswiki/Plugins/MathModePlugin.pm 0644
+pub/System/MathModePlugin/wikiringlogo40x40.png 0644
+tools/MathModePlugin_latex2img 0755
