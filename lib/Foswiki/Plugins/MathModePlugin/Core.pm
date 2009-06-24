@@ -228,7 +228,7 @@ sub entityEncode {
   $extra ||= '';
 
   $text =~
-    s/([[\x01-\x09\x0b\x0c\x0e-\x1f"%&'*<=>@[_\|$extra])/'&#'.ord($1).';'/ge;
+    s/([[\x01-\x1f"%&'*<=>@[_\|$extra])/'&#'.ord($1).';'/ge;
 
   return $text;
 }
