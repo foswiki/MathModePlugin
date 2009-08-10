@@ -32,8 +32,14 @@ $FoswikiCompatibility{endRenderingHandler} = 1.1;
 ###############################################################################
 sub initPlugin {
   ($topic, $web) = @_;
-	
+
   undef $core;
+
+  # Tell WyswiygPlugin to protect <latex>...</latex> markup
+  if (defined &Foswiki::Plugins::WysiwygPlugin::addXMLTag) {
+    Foswiki::Plugins::WysiwygPlugin::addXMLTag('latex', sub { 1 } );
+  }
+
   return 1;
 }
 
