@@ -153,7 +153,7 @@ overridden by defining the respective prefrence variable.
 | &nbsp; | latex preamble to include additional packages \
            (e.g. \usepackage{mathptmx} to change the math font) ;\
            note, that the packages =amsmath= and =color= are loaded too \
-	   as they are obligatory ||
+           as they are obligatory ||
 | =ScaleFactor= | %<nop>LATEXSCALEFACTOR% | 1.2 |
 | &nbsp; | factor to scale images  ||
 | =LatexFGColor= | %<nop>LATEXFGCOLOR% | black |
@@ -167,10 +167,11 @@ overridden by defining the respective prefrence variable.
 <!-- provided for compatibility only
    * Set SHORTDESCRIPTION = Include <nop>LaTeX formatted math in a topic
 -->
-|  Plugin Author: | Graeme Lufkin, Michael Daum |
+|  Plugin Author: | Graeme Lufkin, Foswiki:Main/MichaelDaum |
 |  Copyright &copy;: | 2002 Graeme Lufkin, gwl@u.washington.edu, 2006-2009, Michael Daum http://michaeldaumconsulting.com |
 |  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
-|  Plugin Version: | 4.01 |
+|  Release: | %$RELEASE% |
+|  Version: | %$VERSION% |
 |  Change History: | &nbsp; |
 |  23 Apr 2009: | converted to foswiki plugin |
 |  07 Jan 2009: | certified for foswiki/compat; removed deprecated endRenderingHandler |
@@ -180,25 +181,25 @@ overridden by defining the respective prefrence variable.
 |  02 Oct 2006: | don't fail on hierarchical webs; backwards compatible tempfile cleanup |
 |  31 Aug 2006: | added NO_PREFS_IN_TOPIC; \
                   using =xcolor= instead of =color= latex package now to be able to \
-		  specify colors in html typical codes; default preamble uses latexsym now |
+                  specify colors in html typical codes; default preamble uses latexsym now |
 |  07 Aug 2006: | switched from latex2html to latex+dvipng+convert; \
                   added =size=, =color=, =bgcolor= to &lt;latex> tag; \
-		  rendering pngs by default now; \
-		  reworked plugin settings; \
-		  added a latex2img shell script; \
-		  returning full latex error report |
+                  rendering pngs by default now; \
+                  reworked plugin settings; \
+                  added a latex2img shell script; \
+                  returning full latex error report |
 |  04 Aug 2006: | major rewrite; \
-        fixed security issues by using the sandbox feature \
-        and creating tempfiles properly; \
+                  fixed security issues by using the sandbox feature \
+                  and creating tempfiles properly; \
                   added new &lt;latex>...&lt;/latex> tag to support multiline formulas;\
                   better configurability; \
-        better error reporting; \
-        fixed issues where images have not been cleaned up regularly; \
-        speedup don't clean orphaned images during =view= but during =save=; \
+                  better error reporting; \
+                  fixed issues where images have not been cleaned up regularly; \
+                  speedup don't clean orphaned images during =view= but during =save=; \
                   speedup by adding lazy compilation and initialization; \
                   implemented a =postRenderingHandler= for T* V4; \
                   prevent auto-generated images stored in pub from \
-        being auto-attached using T* V4 |
+                  being auto-attached using T* V4 |
 |  03 Apr 2002: | Initial version |
 |  CPAN Dependencies: | none |
 |  Other Dependencies: | <nop>LaTeX, dvipng, <nop>ImageMagick |

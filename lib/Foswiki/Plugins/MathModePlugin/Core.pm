@@ -227,6 +227,11 @@ sub entityEncode {
   my ($text, $extra) = @_;
   $extra ||= '';
 
+  if (0) {
+  $text =~
+    s/([[\x01-\x1f"%&'*<=>@[_\|$extra])/'&#'.ord($1).';'/ge;
+  }
+
   $text =~
     s/([[\x01-\x1f"%&'*<=>@[_\|$extra])/'&#'.ord($1).';'/ge;
 
