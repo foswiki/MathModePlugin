@@ -147,8 +147,8 @@ overridden by defining the respective prefrence variable.
 | =ImageType= | %<nop>LATEXIMAGETYPE% | 'png' |
 | &nbsp; | extension of the image type; \
            possible values are 'gif' and 'png' ||
-| =Latex2Img= | | '.../%SYSTEMWEB%/%TOPIC%/latex2img' |
-| &nbsp; | the script to convert a latex formula to an image ||
+| =Latex2Img= | | '.../tools/MathModePlugin_latex2img' |
+| &nbsp; | the command to convert a latex formula to an image ||
 | =LatexPreamble= | %<nop>LATEXPREAMBLE% | '\usepackage{latexsym}' |
 | &nbsp; | latex preamble to include additional packages \
            (e.g. \usepackage{mathptmx} to change the math font) ;\
@@ -168,11 +168,13 @@ overridden by defining the respective prefrence variable.
    * Set SHORTDESCRIPTION = Include <nop>LaTeX formatted math in a topic
 -->
 |  Plugin Author: | Graeme Lufkin, Foswiki:Main/MichaelDaum |
-|  Copyright &copy;: | 2002 Graeme Lufkin, gwl@u.washington.edu, 2006-2009, Michael Daum http://michaeldaumconsulting.com |
+|  Copyright &copy;: | 2002 Graeme Lufkin, gwl@u.washington.edu, 2006-2011, Michael Daum http://michaeldaumconsulting.com |
 |  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
 |  Release: | %$RELEASE% |
 |  Version: | %$VERSION% |
 |  Change History: | &nbsp; |
+|  19 Mar 2011: | added Config.spec and DEPENDENCIES to ease installation and configuration; \
+                  improved compatibility to run this plugin on various Foswiki engines |
 |  23 Apr 2009: | converted to foswiki plugin |
 |  07 Jan 2009: | certified for foswiki/compat; removed deprecated endRenderingHandler |
 |  07 Dec 2007: | replaced =templfile= with =mktemp= in the latex2img helper script |

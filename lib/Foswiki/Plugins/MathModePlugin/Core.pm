@@ -1,6 +1,6 @@
 # Plugin for Foswiki - The Free and Open Source Wiki, http://foswiki.org/
 #
-# Copyright (C) 2006-2009 Michael Daum http://michaeldaumconsulting.com
+# Copyright (C) 2006-2011 Michael Daum http://michaeldaumconsulting.com
 # Copyright (C) 2002 Graeme Lufkin, gwl@u.washington.edu
 #
 # This program is free software; you can redistribute it and/or
@@ -21,9 +21,9 @@ package Foswiki::Plugins::MathModePlugin::Core;
 use strict;
 use Digest::MD5 qw( md5_hex );
 use File::Copy qw( move );
-use File::Temp;
-use FindBin;
-use Foswiki::Sandbox;
+use File::Temp ();
+#use FindBin ();
+use Foswiki::Sandbox ();
 
 use constant DEBUG => 0; # toggle me
 
@@ -145,7 +145,7 @@ sub init {
   my $topicPubDir = $pubDir;
   foreach my $dir (split(/\//, "$web/$topic")) {
     $topicPubDir .= '/'.$dir;
-    $topicPubDir = Foswiki::Sandbox::normalizeFileName($topicPubDir);
+    $topicPubDir = normalizeFileName($topicPubDir);
     unless (-d $topicPubDir) {
       mkdir $topicPubDir or die "can't create directory $topicPubDir";
     }
@@ -273,7 +273,7 @@ sub checkImages {
   opendir(DIR,$this->{topicPubDir}) or die "can't open directory $this->{topicPubDir}";
   my @files = grep(/$this->{imagePrefix}.*\.$this->{imageType}$/,readdir(DIR));
   foreach my $fileName (@files) {
-    $fileName = Foswiki::Sandbox::normalizeFileName($fileName);
+    $fileName = normalizeFileName($fileName);
     #writeDebug( "found image: $fileName");
 
     # is the filename the same length as one of our images?
@@ -416,6 +416,27 @@ sub formatColorSpec {
   return "{$color}" if $color =~ /^[a-zA-Z]+$/; # named
   return "[HTML]{$color}" if $color =~ /^[a-fA-F0-9]{6}$/; # named
   return "$color";
+}
+
+###############################################################################
+# wrapper
+sub normalizeFileName {
+  my $fileName = shift;
+
+  if (defined &Foswiki::Sandbox::_cleanUpFilePath) {
+    return Foswiki::Sandbox::_cleanUpFilePath($fileName);
+  }
+
+  if (defined &Foswiki::Sandbox::normalizeFileName) {
+    return Foswiki::Sandbox::normalizeFileName($fileName);
+  }
+
+  if (defined &Foswiki::normalizeFileName) {
+    return Foswiki::normalizeFileName($fileName);
+  }
+    
+  # outch
+  return $fileName;
 }
 
 1;

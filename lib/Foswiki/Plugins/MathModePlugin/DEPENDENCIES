@@ -1,0 +1,2 @@
+dvipng,>0,c,Required. Required to generate .png output
+latex2html,>0,c,Required. Required by the plugin for all output.

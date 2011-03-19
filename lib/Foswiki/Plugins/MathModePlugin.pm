@@ -1,6 +1,6 @@
 # Plugin for Foswiki - The Free and Open Source Wiki, http://foswiki.org/
 #
-# Copyright (C) 2006-2009 Michael Daum http://michaeldaumconsulting.com
+# Copyright (C) 2006-2011 Michael Daum http://michaeldaumconsulting.com
 # Copyright (C) 2002 Graeme Lufkin, gwl@u.washington.edu
 #
 # This program is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@ use vars qw(
   $NO_PREFS_IN_TOPIC $SHORTDESCRIPTION
 );
 $VERSION = '$Rev$';
-$RELEASE = '4.01';
+$RELEASE = '4.02';
 $NO_PREFS_IN_TOPIC = 1;
 $SHORTDESCRIPTION = 'Include <nop>LaTeX formatted math in your Foswiki pages';
 $FoswikiCompatibility{endRenderingHandler} = 1.1;
