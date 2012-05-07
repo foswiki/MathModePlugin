@@ -11,7 +11,7 @@
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details, published at
+# GNU General Public License for more details, published at 
 # http://www.gnu.org/copyleft/gpl.html
 #
 ###############################################################################
@@ -23,54 +23,54 @@ use vars qw(
   $web $topic $VERSION $RELEASE $core %FoswikiCompatibility
   $NO_PREFS_IN_TOPIC $SHORTDESCRIPTION
 );
-$VERSION           = '$Rev$';
-$RELEASE           = '4.02';
+$VERSION = '$Rev$';
+$RELEASE = '4.02';
 $NO_PREFS_IN_TOPIC = 1;
-$SHORTDESCRIPTION  = 'Include <nop>LaTeX formatted math in your Foswiki pages';
+$SHORTDESCRIPTION = 'Include <nop>LaTeX formatted math in your Foswiki pages';
 $FoswikiCompatibility{endRenderingHandler} = 1.1;
 
 ###############################################################################
 sub initPlugin {
-    ( $topic, $web ) = @_;
+  ($topic, $web) = @_;
 
-    undef $core;
+  undef $core;
 
-    # Tell WyswiygPlugin to protect <latex>...</latex> markup
-    if ( defined &Foswiki::Plugins::WysiwygPlugin::addXMLTag ) {
-        Foswiki::Plugins::WysiwygPlugin::addXMLTag( 'latex', sub { 1 } );
-    }
+  # Tell WyswiygPlugin to protect <latex>...</latex> markup
+  if (defined &Foswiki::Plugins::WysiwygPlugin::addXMLTag) {
+    Foswiki::Plugins::WysiwygPlugin::addXMLTag('latex', sub { 1 } );
+  }
 
-    return 1;
+  return 1;
 }
 
 ###############################################################################
 sub commonTagsHandler {
 ### my ( $text, $topic, $web ) = @_;
 
-    $_[0] =~ s/%\\\[(.*?)\\\]%/&handleMath($1,0)/geo;
-    $_[0] =~ s/%\$(.*?)\$%/&handleMath($1,1)/geo;
-    $_[0] =~ s/<latex(?: (.*?))?>(.*?)<\/latex>/&handleMath($2,2,$1)/geos;
+  $_[0] =~ s/%\\\[(.*?)\\\]%/&handleMath($1,0)/geo;
+  $_[0] =~ s/%\$(.*?)\$%/&handleMath($1,1)/geo;
+  $_[0] =~ s/<latex(?: (.*?))?>(.*?)<\/latex>/&handleMath($2,2,$1)/geos;
 }
 
 ###############################################################################
 sub getCore {
-    return $core if $core;
+  return $core if $core;
+  
+  require Foswiki::Plugins::MathModePlugin::Core;
+  $core = new Foswiki::Plugins::MathModePlugin::Core;
 
-    require Foswiki::Plugins::MathModePlugin::Core;
-    $core = new Foswiki::Plugins::MathModePlugin::Core;
-
-    return $core;
+  return $core;
 }
 
 ###############################################################################
-sub handleMath {
-    return getCore()->handleMath( $web, $topic, @_ );
+sub handleMath { 
+  return getCore()->handleMath($web, $topic, @_); 
 }
 
 ###############################################################################
-sub postRenderingHandler {
-    return unless $core;    # no math
-    $core->postRenderingHandler( $web, $topic, @_ );
+sub postRenderingHandler { 
+  return unless $core; # no math
+  $core->postRenderingHandler($web, $topic, @_)
 }
-
+	
 1;
