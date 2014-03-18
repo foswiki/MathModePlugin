@@ -1,25 +1,8 @@
-%META:TOPICINFO{author="ProjectContributor" date="1231348349" format="1.1"  version="1.2"}%
-<!--
-
-   PLEASE DO NOT EDIT THIS TOPIC
-
-   It is automatically generated from the subversion repository, and any changes
-   you make will simply be overwritten the next time a release is generated.
-
-   Instead, you could check your fix in, raise a bug in the Bugs web, or mail the author.
-
-   NatSkin: grant to have a style with a light background
--->
+%META:TOPICINFO{author="ProjectContributor" comment="autosave" date="1356278776" format="1.1" version="1"}%
 ---+!! %TOPIC%
+
 %TOC%
-<table style="float:right">
-<tr>
-  <td><img src="%ATTACHURLPATH%/wikiringlogo40x40.png"></td>
-  <td><a href="http://wikiring.com" title="Make your Wiki ring!" style="text-decoration:none">
-      Powered by <br /> <nop>WikiRing Consultants </a>
-  </td>
-</tr>
-</table>
+
 ---++ Description
 This plugin allows you to include mathematics in a topic, with a format
 very similar to <nop>LaTeX.  The external program =latex2html= is used to
@@ -136,7 +119,7 @@ All of the below variables can be set in your =LocalSite.cfg= file like this:
 $Foswiki::cfg{MathModePlugin}{<Name>} = <value>;
 </verbatim>
 Some of the below variables can _only_ be set this way, some of the may be
-overridden by defining the respective prefrence variable.
+overridden by defining the respective preference variable.
 
 | *Name* | *Preference Variable* | *Default* |
 | =HashCodeLength= |  | 32 |
@@ -168,11 +151,12 @@ overridden by defining the respective prefrence variable.
    * Set SHORTDESCRIPTION = Include <nop>LaTeX formatted math in a topic
 -->
 |  Plugin Author: | Graeme Lufkin, Foswiki:Main/MichaelDaum |
-|  Copyright &copy;: | 2002 Graeme Lufkin, gwl@u.washington.edu, 2006-2011, Michael Daum http://michaeldaumconsulting.com |
+|  Copyright &copy;: | 2002 Graeme Lufkin, gwl@u.washington.edu, 2006-2014, Michael Daum http://michaeldaumconsulting.com |
 |  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
 |  Release: | %$RELEASE% |
 |  Version: | %$VERSION% |
 |  Change History: | &nbsp; |
+|  18 Mar 2014: | make sure the directory is present when caching images |
 |  19 Mar 2011: | added Config.spec and DEPENDENCIES to ease installation and configuration; \
                   improved compatibility to run this plugin on various Foswiki engines |
 |  23 Apr 2009: | converted to foswiki plugin |
@@ -208,5 +192,3 @@ overridden by defining the respective prefrence variable.
 |  Perl Version: | 5.8 |
 |  Plugin Home: | Foswiki:Extensions/%TOPIC% |
 |  Support: | Foswiki:Support/%TOPIC% |
-
-%META:FILEATTACHMENT{name="wikiringlogo40x40.png" attr="h" autoattached="1" comment="" date="1194980363" path="wikiringlogo40x40.png" size="2571" user="ProjectContributor" version="1"}%

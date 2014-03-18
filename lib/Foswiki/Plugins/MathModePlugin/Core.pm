@@ -1,6 +1,6 @@
 # Plugin for Foswiki - The Free and Open Source Wiki, http://foswiki.org/
 #
-# Copyright (C) 2006-2011 Michael Daum http://michaeldaumconsulting.com
+# Copyright (C) 2006-2014 Michael Daum http://michaeldaumconsulting.com
 # Copyright (C) 2002 Graeme Lufkin, gwl@u.washington.edu
 #
 # This program is free software; you can redistribute it and/or
@@ -15,15 +15,16 @@
 # http://www.gnu.org/copyleft/gpl.html
 #
 ###############################################################################
-
 package Foswiki::Plugins::MathModePlugin::Core;
 
 use strict;
+use warnings;
+
+use Foswiki::Sandbox ();
 use Digest::MD5 qw( md5_hex );
 use File::Copy qw( move );
 use File::Temp ();
 #use FindBin ();
-use Foswiki::Sandbox ();
 
 use constant DEBUG => 0; # toggle me
 
@@ -208,8 +209,9 @@ sub handleMath {
   #writeDebug("hashing '$text' as $hashCode");
 
   # construct url path to image
-  my $url = Foswiki::Func::getPubUrlPath().'/'.$web.'/'.$topic.
-    '/'.$this->{imagePrefix}.$hashCode.'.'.$this->{imageType};
+  my $dir = Foswiki::Func::getPubUrlPath().'/'.$web.'/'.$topic;
+  mkdir $dir unless -d $dir;
+  my $url = $dir .  '/'.$this->{imagePrefix}.$hashCode.'.'.$this->{imageType};
 
   # return a link to an attached image, which we will create later
   my $container = $inlineFlag?'span':'div';

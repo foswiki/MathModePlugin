@@ -25,7 +25,7 @@ $Foswiki::cfg{MathModePlugin}{Latext2Img} = '../tools/MathModePlugin_latex2img';
 # as they are obligatory 
 $Foswiki::cfg{MathModePlugin}{LatexPreamble} = '\usepackage{latexsym}';
 
-# **NUMBER**
+# **STRING**
 # factor to scale images
 $Foswiki::cfg{MathModePlugin}{ScaleFactor} = 1.2;
 
