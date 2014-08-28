@@ -26,13 +26,13 @@ use File::Copy qw( move );
 use File::Temp ();
 #use FindBin ();
 
-use constant DEBUG => 0; # toggle me
+use constant TRACE => 0; # toggle me
 
 ###############################################################################
 # static
 sub writeDebug {
-  #&Foswiki::Func::writeDebug('- MathModePlugin - '.$_[0]) if DEBUG;
-  print STDERR '- MathModePlugin - '.$_[0]."\n" if DEBUG;
+  #&Foswiki::Func::writeDebug('- MathModePlugin - '.$_[0]) if TRACE;
+  print STDERR '- MathModePlugin - '.$_[0]."\n" if TRACE;
 }
 
 ###############################################################################
