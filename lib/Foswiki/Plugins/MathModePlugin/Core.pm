@@ -1,6 +1,6 @@
 # Plugin for Foswiki - The Free and Open Source Wiki, http://foswiki.org/
 #
-# Copyright (C) 2006-2014 Michael Daum http://michaeldaumconsulting.com
+# Copyright (C) 2006-2025 Michael Daum http://michaeldaumconsulting.com
 # Copyright (C) 2002 Graeme Lufkin, gwl@u.washington.edu
 #
 # This program is free software; you can redistribute it and/or
@@ -11,10 +11,9 @@
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details, published at 
+# GNU General Public License for more details, published at
 # http://www.gnu.org/copyleft/gpl.html
 #
-###############################################################################
 package Foswiki::Plugins::MathModePlugin::Core;
 
 use strict;
@@ -24,68 +23,70 @@ use Foswiki::Sandbox ();
 use Digest::MD5 qw( md5_hex );
 use File::Copy qw( move );
 use File::Temp ();
+use Foswiki::Attrs ();
 #use FindBin ();
 
 use constant TRACE => 0; # toggle me
 
-###############################################################################
-# static
-sub writeDebug {
-  #&Foswiki::Func::writeDebug('- MathModePlugin - '.$_[0]) if TRACE;
-  print STDERR '- MathModePlugin - '.$_[0]."\n" if TRACE;
-}
+=begin TML
 
-###############################################################################
+---++ ClassMethod new()
+
+constructor
+
+=cut
+
 sub new {
   my $class = shift;
 
   my $this = {
-    hashedMathStrings => {}, 
-      # contains the math strings, indexed by their hash code
+    hashedMathStrings => {},
+    # contains the math strings, indexed by their hash code
 
     fgColors => {},
-      # contains the foreground color of a math string
+    # contains the foreground color of a math string
 
     bgColor => {},
-      # contains the background color for all formulas
+    # contains the background color for all formulas
 
     sizes => {},
-      # font size of a math string, can be; can be
-      # tiny, scriptsize, footnotesize, small, normalsize, large, Large, LARGE,
-      # huge or Huge
+    # font size of a math string, can be; can be
+    # tiny, scriptsize, footnotesize, small, normalsize, large, Large, LARGE,
+    # huge or Huge
 
     hashCodeLength => $Foswiki::cfg{MathModePlugin}{HashCodeLength} || 32,
-      # length of the hash code. If you switch to a different
-      # hash function, you will likely have to change this
+    # length of the hash code. If you switch to a different
+    # hash function, you will likely have to change this
 
     imagePrefix => $Foswiki::cfg{MathModePlugin}{ImagePrefix} || '_MathModePlugin_',
-      # string to be prepended to any auto-generated image
+    # string to be prepended to any auto-generated image
 
     latex2Img => $Foswiki::cfg{MathModePlugin}{Latex2Img},
-      # the command to convert latex to a png or gif
+    # the command to convert latex to a png or gif
 
     scaleFactor => $Foswiki::cfg{MathModePlugin}{ScaleFactor} || 1.2,
-      # factor to scale images;
-      # may be overridden by a LATEXSCALEFACTOR preference variable
+    # factor to scale images;
+    # may be overridden by a LATEXSCALEFACTOR preference variable
 
     latexFGColor => $Foswiki::cfg{MathModePlugin}{LatexFGColor} || 'black',
-      # default text color
+    # default text color
 
     latexBGColor => $Foswiki::cfg{MathModePlugin}{LatexBGColor} || 'white',
-      # default background color
+    # default background color
 
     latexFontSize => $Foswiki::cfg{MathModePlugin}{LatexFontSize} || 'normalsize',
-      # default text color
+    # default text color
 
-    latexPreamble => $Foswiki::cfg{MathModePlugin}{Preamble} || 
-      '\usepackage{latexsym}',
-      # latex preamble, e.g. to include additional packages; may be 
-      # overridden by a LATEXPREAMBLE preference variable;
-      # Example: \usepackage{mathptmx} to change the math font
+    latexPreamble => $Foswiki::cfg{MathModePlugin}{Preamble}
+      || $Foswiki::cfg{MathModePlugin}{LatexPreamble}
+      || '\usepackage{latexsym}',
+    # latex preamble, e.g. to include additional packages; may be
+    # overridden by a LATEXPREAMBLE preference variable;
+    # Example: \usepackage{mathptmx} to change the math font
 
     imageType => $Foswiki::cfg{MathModePlugin}{ImageType} || 'png',
-      # extension of the image type;
-      # may be overridden by a LATEXIMAGETYPE preference variable
+    # extension of the image type;
+    # may be overridden by a LATEXIMAGETYPE preference variable
 
     @_
   };
@@ -93,8 +94,14 @@ sub new {
   return bless($this, $class);
 }
 
-###############################################################################
-# delayed initialization
+=begin TML
+
+---++ ObjectMethod init()
+
+delayed initialization
+
+=cut
+
 sub init {
   my ($this, $web, $topic) = @_;
 
@@ -134,19 +141,20 @@ sub init {
 
   # compute filenname length of an image
   $this->{imageFileNameLength} =
-    $this->{hashCodeLength}+length($this->{imageType})+length($this->{imagePrefix})+1;
+    $this->{hashCodeLength} + length($this->{imageType}) + length($this->{imagePrefix}) + 1;
 
   # get refresh request
-  my $query = Foswiki::Func::getCgiQuery();
+  my $query = Foswiki::Func::getRequestObject();
   my $refresh = $query->param('refresh') || '';
-  $this->{doRefresh} = ($refresh =~ /^(on|yes|1)$/)?1:0;
+  $this->{doRefresh} = ($refresh =~ /^(on|yes|1|math)$/) ? 1 : 0;
+  _writeDebug("doRefresh=$this->{doRefresh}");
 
   # create the topic pubdir if it does not exist already
   my $pubDir = $Foswiki::cfg{PubDir};
   my $topicPubDir = $pubDir;
   foreach my $dir (split(/\//, "$web/$topic")) {
-    $topicPubDir .= '/'.$dir;
-    $topicPubDir = normalizeFileName($topicPubDir);
+    $topicPubDir .= '/' . $dir;
+    $topicPubDir = _normalizeFileName($topicPubDir);
     unless (-d $topicPubDir) {
       mkdir $topicPubDir or die "can't create directory $topicPubDir";
     }
@@ -171,9 +179,9 @@ sub init {
     }
     # Look in these directories to see if the default supplied tool is there
     my $defaultScriptName = 'MathModePlugin_latex2img';
-    POSSIBLE_DIR: for my $possibleToolsDir (@possibleToolsDirs) {
-      if (-e "$possibleToolsDir/$defaultScriptName" and
-          -x "$possibleToolsDir/$defaultScriptName")
+  POSSIBLE_DIR: for my $possibleToolsDir (@possibleToolsDirs) {
+      if (  -e "$possibleToolsDir/$defaultScriptName"
+        and -x "$possibleToolsDir/$defaultScriptName")
       {
         $this->{latex2Img} = "$possibleToolsDir/$defaultScriptName";
         last POSSIBLE_DIR;
@@ -183,20 +191,24 @@ sub init {
 
 }
 
-###############################################################################
-# This function takes a string of math, computes its hash code, and returns a
-# link to what will be the image representing this math.
+=begin TML
+
+---++ ObjectMethod handleMath()
+
+ This function takes a string of math, computes its hash code, and returns a
+ link to what will be the image representing this math.
+
+=cut
+
 sub handleMath {
   my ($this, $web, $topic, $text, $inlineFlag, $args) = @_;
-  
+
   # store the string in a hash table, indexed by the MD5 hash
-  $text =~ s/^\s+//go;
-  $text =~ s/\s+$//go;
+  $text =~ s/^\s+|\s+$//g;
 
   # extract latex options
   $args ||= '';
-  require Foswiki::Attrs;
-  my $params = new Foswiki::Attrs($args);
+  my $params = Foswiki::Attrs->new($args);
   $this->{fgColors}{$text} = $params->{color} || $this->{latexFGColor};
   $this->{bgColor} = $params->{bgcolor} || $this->{latexBGColor};
 
@@ -204,45 +216,35 @@ sub handleMath {
   $this->{sizes}{$text} = $size if $size;
 
   # TODO: add global settings to hash
-  my $hashCode = md5_hex($text.$this->{fgColors}{$text}.$this->{bgColor}.$size);
+  my $hashCode = md5_hex($text . $this->{fgColors}{$text} . $this->{bgColor} . $size);
   $this->{hashedMathStrings}{$hashCode} = $text;
-  #writeDebug("hashing '$text' as $hashCode");
+  #_writeDebug("hashing '$text' as $hashCode");
 
   # construct url path to image
-  my $dir = Foswiki::Func::getPubUrlPath().'/'.$web.'/'.$topic;
+  my $dir = Foswiki::Func::getPubUrlPath() . '/' . $web . '/' . $topic;
   mkdir $dir unless -d $dir;
-  my $url = $dir .  '/'.$this->{imagePrefix}.$hashCode.'.'.$this->{imageType};
+  my $url = $dir . '/' . $this->{imagePrefix} . $hashCode . '.' . $this->{imageType};
 
   # return a link to an attached image, which we will create later
-  my $container = $inlineFlag?'span':'div';
-  my $alt = entityEncode($text);
-  my $result = '<img alt="'.$alt.'" class="mmpImage" src="'.$url.'" '.$args.' />';
-  $result = "<$container class='mmpContainer' align='center'>".$result."<\/$container>"
+  my $container = $inlineFlag ? 'span' : 'div';
+  my $alt = _entityEncode($text);
+  my $result = '<img alt="' . $alt . '" class="mmpImage" src="' . $url . '" ' . $args . ' />';
+  $result = "<$container class='mmpContainer' align='center'>" . $result . "<\/$container>"
     unless $inlineFlag == 2;
 
   return $result;
 }
 
-###############################################################################
-# from Foswiki.pm
-sub entityEncode {
-  my ($text, $extra) = @_;
-  $extra ||= '';
+=begin TML
 
-  if (0) {
-  $text =~
-    s/([[\x01-\x1f"%&'*<=>@[_\|$extra])/'&#'.ord($1).';'/ge;
-  }
+---++ ObjectMethod postRenderingHandler()
 
-  $text =~
-    s/([[\x01-\x1f"%&'*<=>@[_\|$extra])/'&#'.ord($1).';'/ge;
+=cut
 
-  return $text;
-}
-
-###############################################################################
 sub postRenderingHandler {
   my ($this, $web, $topic) = @_;
+
+  _writeDebug("called postRenderingHandler");
 
   return unless keys %{$this->{hashedMathStrings}};
 
@@ -259,24 +261,30 @@ sub postRenderingHandler {
   $_[3] .= $msg;
 }
 
-###############################################################################
-# if this is a save script, then we will try to delete old files;
-# existing files are checkd if they are still in use;
-# returns the number of images to be re-rendered
+=begin TML
+
+---++ ObjectMethod checkImages()
+
+if this is a save script, then we will try to delete old files;
+existing files are checkd if they are still in use;
+returns the number of images to be re-rendered
+
+=cut
+
 sub checkImages {
   my $this = shift;
 
   # only delete during a save
-  my $deleteFiles = ($this->{cgiScript} =~ /^save/ || $this->{doRefresh})?1:0;
+  my $deleteFiles = ($this->{cgiScript} =~ /^save/ || $this->{doRefresh}) ? 1 : 0;
 
-  #writeDebug("deleteFiles=$deleteFiles, cgiScript=$this->{cgiScript}");
+  #_writeDebug("deleteFiles=$deleteFiles, cgiScript=$this->{cgiScript}");
 
   # look for existing images, delete old ones
-  opendir(DIR,$this->{topicPubDir}) or die "can't open directory $this->{topicPubDir}";
-  my @files = grep(/$this->{imagePrefix}.*\.$this->{imageType}$/,readdir(DIR));
+  opendir(DIR, $this->{topicPubDir}) or die "can't open directory $this->{topicPubDir}";
+  my @files = grep(/$this->{imagePrefix}.*\.$this->{imageType}$/, readdir(DIR));
   foreach my $fileName (@files) {
-    $fileName = normalizeFileName($fileName);
-    #writeDebug( "found image: $fileName");
+    $fileName = _normalizeFileName($fileName);
+    #_writeDebug( "found image: $fileName");
 
     # is the filename the same length as one of our images?
     next unless length($fileName) == $this->{imageFileNameLength};
@@ -288,37 +296,45 @@ sub checkImages {
     next unless length($hashCode) == $this->{hashCodeLength};
 
     # is the image still used in the document?
-    if (exists($this->{hashedMathStrings}{$hashCode} ) ) {
+    if (exists($this->{hashedMathStrings}{$hashCode})) {
       # the image is already there, we don't need to re-render;
       # refresh the cache only if we asked for it
       unless ($this->{doRefresh}) {
-        #writeDebug("skipping $this->{hashedMathStrings}{$hashCode}");
+        #_writeDebug("skipping $this->{hashedMathStrings}{$hashCode}");
         delete $this->{hashedMathStrings}{$hashCode};
         next;
       }
     }
-    
+
     # maintenance
     next unless $deleteFiles;
-    $fileName = $this->{topicPubDir}.'/'.$fileName;
-    #writeDebug("deleting old image $fileName");
+    $fileName = $this->{topicPubDir} . '/' . $fileName;
+    #_writeDebug("deleting old image $fileName");
     unlink $fileName or die "can't delete file $fileName";
   }
 
   return scalar(keys %{$this->{hashedMathStrings}});
 }
 
-###############################################################################
+=begin TML
+
+---++ ObjectMethod renderImages()
+
+=cut
+
 sub renderImages {
   my $this = shift;
+
+  _writeDebug("called renderImages");
 
   # used for reporting errors
   my $msg;
 
   # create temporary storage
-  my $tempDir = File::Temp::tempdir(CLEANUP =>1);
-  my $tempFile = new File::Temp(DIR=>$tempDir);
+  my $tempDir = File::Temp::tempdir(CLEANUP => TRACE ? 0 : 1);
+  my $tempFile = new File::Temp(DIR => $tempDir, UNLINK => TRACE ? 0 : 1);
   chdir $tempDir or die "can't change to temp dir $tempDir";
+  _writeDebug("tempDir=$tempDir, tempFile=$tempFile");
 
   # maps math strings' hash codes to the filename latex2html generates
   my %imageFile = ();
@@ -331,7 +347,7 @@ sub renderImages {
   print $tempFile "\\documentclass[fleqn,12pt]{article}\n";
   print $tempFile <<'PREAMBLE';
 \usepackage{amsmath}
-\usepackage[normal]{xcolor}
+\usepackage{xcolor}
 \setlength{\mathindent}{0cm}
 \definecolor{teal}{rgb}{0,0.5,0.5}
 \definecolor{navy}{rgb}{0,0,0.5}
@@ -340,14 +356,14 @@ sub renderImages {
 \definecolor{maroon}{rgb}{0.5,0,0}
 \definecolor{silver}{gray}{0.75}
 PREAMBLE
-  print $tempFile $this->{latexPreamble}."\n";
-  print $tempFile '\begin{document}'."\n";
-  print $tempFile '\pagestyle{empty}'."\n";
-  print $tempFile "\\pagecolor".formatColorSpec($this->{bgColor})."\n";
+  print $tempFile $this->{latexPreamble} . "\n";
+  print $tempFile '\begin{document}' . "\n";
+  print $tempFile '\pagestyle{empty}' . "\n";
+  print $tempFile "\\pagecolor" . _formatColorSpec($this->{bgColor}) . "\n";
   while (my ($key, $value) = each(%{$this->{hashedMathStrings}})) {
     $imageNumber++;
     print $tempFile "{\n";
-    print $tempFile "\\color".formatColorSpec($this->{fgColors}{$value})."\n"
+    print $tempFile "\\color" . _formatColorSpec($this->{fgColors}{$value}) . "\n"
       if $this->{fgColors}{$value};
     if ($this->{sizes}{$value}) {
       print $tempFile "\\$this->{sizes}{$value}\n";
@@ -360,58 +376,57 @@ PREAMBLE
     my $environment = 'math';
     $environment = 'multline*' if $value =~ /\\\\/;
     $environment = 'eqnarray*' if $value =~ '&\s*=\s*&';
-    #writeDebug("using $environment for $value");
+    #_writeDebug("using $environment for $value");
     print $tempFile "\\begin{$environment}\\displaystyle $value\\end{$environment}\n";
     print $tempFile "}\n";
 
     print $tempFile "\\clearpage\n";
 
     # remember the filename it ends up
-    $imageFile{$key} = $tempFile.$imageNumber.'.'.$this->{imageType};
+    $imageFile{$key} = $tempFile . $imageNumber . '.' . $this->{imageType};
   }
   print $tempFile "\\end{document}\n";
 
   my ($data, $exit);
-  if ($this->{latex2Img})  {
+  if ($this->{latex2Img}) {
     # run latex2html on the latex file we generated
     my $latex2ImgCmd = $this->{latex2Img} . ' %FILENAME|F%';
     $latex2ImgCmd .= " $this->{bgColor}";
-    $latex2ImgCmd .= ' -D '.int(100)*$this->{scaleFactor};
-    $latex2ImgCmd .= ' --'.$this->{imageType};
+    $latex2ImgCmd .= ' -D ' . int(100) * $this->{scaleFactor};
+    $latex2ImgCmd .= ' --' . $this->{imageType};
 
-    #writeDebug("executing $latex2ImgCmd");
-    ($data, $exit) = Foswiki::Sandbox->sysCommand($latex2ImgCmd, FILENAME=>"$tempFile");
-  }
-  else {
+    #_writeDebug("executing $latex2ImgCmd");
+    ($data, $exit) = Foswiki::Sandbox->sysCommand($latex2ImgCmd, FILENAME => "$tempFile");
+  } else {
     $exit = 1;
     $data = "MathModePlugin cannot find the latex2img script. Please check the settings in configure";
   }
-  #writeDebug("exit=$exit");
-  #writeDebug("data=$data");
+  #_writeDebug("exit=$exit");
+  #_writeDebug("data=$data");
   if ($exit) {
-    $msg = '<div class="foswikiAlert">Error during latex2img:<pre>'.
-      $data.'</pre></div>';
+    $msg = '<div class="foswikiAlert">Error during latex2img:<pre>' . $data . '</pre></div>';
   } else {
     # rename the files to the hash code, so we can uniquely identify them
     while ((my $key, my $value) = each(%imageFile)) {
       my $source = $value;
-      my $target = $this->{topicPubDir}.'/'.$this->{imagePrefix}.$key.'.'.$this->{imageType};
-      #writeDebug("source=$source, target=$target");
-      #writeDebug("created new image $target");
-      move($source, $target);# or die "can't move $source to $target: $@";
+      my $target = $this->{topicPubDir} . '/' . $this->{imagePrefix} . $key . '.' . $this->{imageType};
+      #_writeDebug("source=$source, target=$target");
+      #_writeDebug("created new image $target");
+      move($source, $target); # or die "can't move $source to $target: $@";
     }
   }
 
   # cleanup
-  $this->{hashedMathStrings} =  {};
+  $this->{hashedMathStrings} = {};
   #File::Temp::cleanup(); # SMELL: n/a in perl < 5.8.8
   close $tempFile;
   return $msg;
 }
 
-###############################################################################
+# static helpers
+
 # returns the arguments to the latex commands \color or \pagecolor
-sub formatColorSpec {
+sub _formatColorSpec {
   my $color = shift;
 
   # try to auto-detect the color spec
@@ -420,9 +435,7 @@ sub formatColorSpec {
   return "$color";
 }
 
-###############################################################################
-# wrapper
-sub normalizeFileName {
+sub _normalizeFileName {
   my $fileName = shift;
 
   if (defined &Foswiki::Sandbox::_cleanUpFilePath) {
@@ -436,9 +449,27 @@ sub normalizeFileName {
   if (defined &Foswiki::normalizeFileName) {
     return Foswiki::normalizeFileName($fileName);
   }
-    
+
   # outch
   return $fileName;
+}
+
+sub _writeDebug {
+  #&Foswiki::Func::writeDebug('- MathModePlugin - '.$_[0]) if TRACE;
+  print STDERR '- MathModePlugin - ' . $_[0] . "\n" if TRACE;
+}
+
+sub _entityEncode {
+  my ($text, $extra) = @_;
+  $extra ||= '';
+
+  if (0) {
+    $text =~ s/([[\x01-\x1f"%&'*<=>@[_\|$extra])/'&#'.ord($1).';'/ge;
+  }
+
+  $text =~ s/([[\x01-\x1f"%&'*<=>@[_\|$extra])/'&#'.ord($1).';'/ge;
+
+  return $text;
 }
 
 1;

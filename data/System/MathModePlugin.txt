@@ -1,5 +1,6 @@
-%META:TOPICINFO{author="ProjectContributor" comment="autosave" date="1356278776" format="1.1" version="1"}%
+%META:TOPICINFO{author="ProjectContributor" comment="" date="1756478217" format="1.1"  version="1"}%
 ---+!! %TOPIC%
+%FORMFIELD{"Description"}%
 
 %TOC%
 
@@ -109,7 +110,7 @@ This is <latex color="red" size="large">\cal A</latex> new inline test.
 | =\zeta= | <latex>\zeta</latex> | =\nu= | <latex>\nu</latex> |
 | =\eta= | <latex>\eta</latex> | =\xi= | <latex>\xi</latex> |
 
----++ Plugin Installation Instructions
+---++ Installation Instructions
 %$INSTALL_INSTRUCTIONS%
 
 ---++ Configuration
@@ -146,16 +147,12 @@ overridden by defining the respective preference variable.
 | =LatexFontSize= | %<nop>LATEXFONTSIZE% | normalsize |
 | &nbsp; | default font size ||
 
----++ Plugin Info
-<!-- provided for compatibility only
-   * Set SHORTDESCRIPTION = Include <nop>LaTeX formatted math in a topic
--->
-|  Plugin Author: | Graeme Lufkin, Foswiki:Main/MichaelDaum |
-|  Copyright &copy;: | 2002 Graeme Lufkin, gwl@u.washington.edu, 2006-2014, Michael Daum http://michaeldaumconsulting.com |
-|  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
-|  Release: | %$RELEASE% |
-|  Version: | %$VERSION% |
-|  Change History: | &nbsp; |
+---++ Dependencies
+%$DEPENDENCIES%
+
+---++ Change History
+%TABLE{columnwidths="7em" tablewidth="100%"}%
+|  29 Aug 2025: | fixed latex preamble config setting; some minor reorg of code |
 |  18 Mar 2014: | make sure the directory is present when caching images |
 |  19 Mar 2011: | added Config.spec and DEPENDENCIES to ease installation and configuration; \
                   improved compatibility to run this plugin on various Foswiki engines |
@@ -187,8 +184,14 @@ overridden by defining the respective preference variable.
                   prevent auto-generated images stored in pub from \
                   being auto-attached using T* V4 |
 |  03 Apr 2002: | Initial version |
-|  CPAN Dependencies: | none |
-|  Other Dependencies: | <nop>LaTeX, dvipng, <nop>ImageMagick |
-|  Perl Version: | 5.8 |
-|  Plugin Home: | Foswiki:Extensions/%TOPIC% |
-|  Support: | Foswiki:Support/%TOPIC% |
+
+%META:FORM{name="PackageForm"}%
+%META:FIELD{name="Author" title="Author" value="Graeme Lufkin, Michael Daum"}%
+%META:FIELD{name="Version" title="Version" value="%25$VERSION%25"}%
+%META:FIELD{name="Release" title="Release" value="%25$RELEASE%25"}%
+%META:FIELD{name="Description" title="Description" value="%25$SHORTDESCRIPTION%25"}%
+%META:FIELD{name="Repository" title="Repository" value="https://github.com/foswiki/%25TOPIC%25"}%
+%META:FIELD{name="Copyright" title="Copyright" value="2002 Graeme Lufkin, gwl@u.washington.edu, 2006-2025, Michael Daum"}%
+%META:FIELD{name="License" title="License" value="GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]])"}%
+%META:FIELD{name="Home" title="Home" value="Foswiki:Extensions/%25TOPIC%25"}%
+%META:FIELD{name="Support" title="Support" value="Foswiki:Support/%25TOPIC%25"}%

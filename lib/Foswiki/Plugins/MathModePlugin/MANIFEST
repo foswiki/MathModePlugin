@@ -1,5 +1,8 @@
+!noci
 data/System/MathModePlugin.txt 0644
 lib/Foswiki/Plugins/MathModePlugin/Config.spec 0644
 lib/Foswiki/Plugins/MathModePlugin/Core.pm 0644
+lib/Foswiki/Plugins/MathModePlugin/DEPENDENCIES 0644
+lib/Foswiki/Plugins/MathModePlugin/MANIFEST 0644
 lib/Foswiki/Plugins/MathModePlugin.pm 0644
 tools/MathModePlugin_latex2img 0755

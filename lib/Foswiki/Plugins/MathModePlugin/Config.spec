@@ -16,7 +16,7 @@ $Foswiki::cfg{MathModePlugin}{ImageType} = 'png';
 
 # **COMMAND**
 # the command to convert a latex formula to an image
-$Foswiki::cfg{MathModePlugin}{Latext2Img} = '../tools/MathModePlugin_latex2img';
+$Foswiki::cfg{MathModePlugin}{Latext2Img} = '$Foswiki::cfg{ToolsDir}/MathModePlugin_latex2img';
 
 # **STRING**
 # latex preamble to include additional packages
