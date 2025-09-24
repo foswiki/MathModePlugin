@@ -88,6 +88,8 @@ sub new {
     # extension of the image type;
     # may be overridden by a LATEXIMAGETYPE preference variable
 
+    publicErrorMessage => $Foswiki::cfg{MathModePlugin}{PublicErrorMessage} // 0,
+
     @_
   };
 
@@ -404,7 +406,11 @@ PREAMBLE
   #_writeDebug("exit=$exit");
   #_writeDebug("data=$data");
   if ($exit) {
-    $msg = '<div class="foswikiAlert">Error during latex2img:<pre>' . $data . '</pre></div>';
+    if ($this->{publicErrorMessage}) {
+      $msg = '<div class="foswikiAlert">Error during latex2img:<pre>' . $data . '</pre></div>';
+    } else {
+      $msg = '<div class="foswikiAlert">Error during latex2img execution</div>';
+    }
   } else {
     # rename the files to the hash code, so we can uniquely identify them
     while ((my $key, my $value) = each(%imageFile)) {

@@ -1,4 +1,4 @@
-%META:TOPICINFO{author="ProjectContributor" comment="" date="1756478217" format="1.1"  version="1"}%
+%META:TOPICINFO{author="ProjectContributor" comment="" date="1758703238" format="1.1" version="1"}%
 ---+!! %TOPIC%
 %FORMFIELD{"Description"}%
 
@@ -45,15 +45,16 @@ If you might want to recompute the images cached for the current page then appen
 e.g. click *[[%SCRIPTURLPATH{"view"}%/%WEB%/%TOPIC%?refresh=on][here]]* to refresh the formulas
 in the examples below.
 
-
 ---++ Examples
 The following will only display correctly if this plugin is installed and 
 configured correctly.
+
 <verbatim>
 <latex title="this is an example">
   \int_{-\infty}^\infty e^{-\alpha x^2} dx = \sqrt{\frac{\pi}{\alpha}}
 </latex>
 </verbatim>
+
 <latex title="this is an example">
   \int_{-\infty}^\infty e^{-\alpha x^2} dx = \sqrt{\frac{\pi}{\alpha}}
 </latex>
@@ -99,7 +100,6 @@ configured correctly.
 </latex>
 
 This is <latex color="red" size="large">\cal A</latex> new inline test.
-
 
 | *Greek letters* ||||
 | =\alpha= | <latex>\alpha</latex> | =\theta= | <latex>\theta</latex> |
@@ -152,6 +152,7 @@ overridden by defining the respective preference variable.
 
 ---++ Change History
 %TABLE{columnwidths="7em" tablewidth="100%"}%
+|  24 Sep 2025: | added switch to hide server internals in latex error messages (reported by Boud Roukema) |
 |  29 Aug 2025: | fixed latex preamble config setting; some minor reorg of code |
 |  18 Mar 2014: | make sure the directory is present when caching images |
 |  19 Mar 2011: | added Config.spec and DEPENDENCIES to ease installation and configuration; \

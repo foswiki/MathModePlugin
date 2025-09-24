@@ -41,4 +41,9 @@ $Foswiki::cfg{MathModePlugin}{LatexBGColor} = 'white';
 # default font size 
 $Foswiki::cfg{MathModePlugin}{LatexFontSize} = 'normalsize';
 
+# **BOOLEAN LABEL="Public Error Messages"**
+# note that enabling this switch might reveal server internals part of the error messages;
+# do not enable on public sites.
+$Foswiki::cfg{MathModePlugin}{PublicErrorMessage} = 0;
+
 1;

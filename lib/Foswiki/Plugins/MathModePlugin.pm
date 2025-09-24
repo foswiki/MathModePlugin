@@ -21,7 +21,7 @@ package Foswiki::Plugins::MathModePlugin;
 use strict;
 use warnings;
 
-our $VERSION = '4.05';
+our $VERSION = '4.06';
 our $RELEASE = '%$RELEASE%';
 our $NO_PREFS_IN_TOPIC = 1;
 our $SHORTDESCRIPTION = 'Include <nop>LaTeX formatted math in your Foswiki pages';
